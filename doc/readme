@@ -1,0 +1,4 @@
+使用库
+x264:
+	http://www.videolan.org/developers/x264.html
+	git clone git://git.videolan.org/x264.git
