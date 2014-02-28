@@ -232,7 +232,7 @@ int main(int argc, char** argv)
 	RTPSession session;
 
 	RTPSessionParams sessionparams;
-	sessionparams.SetOwnTimestampUnit(1.0/90000);
+	sessionparams.SetOwnTimestampUnit(1.0/90000.0);
 
 	RTPUDPv4TransmissionParams transparams;
 	transparams.SetPortbase(8000);
@@ -311,7 +311,7 @@ int main(int argc, char** argv)
 			if(n->len<=MAX_RTP_PKT_LENGTH)
 			{
 				//printf("ddd0\n");
-				session.SetDefaultMark(true);
+				//session.SetDefaultMark(false);
 				//设置NALU HEADER,并将这个HEADER填入sendbuf[12]
 				nalu_hdr =(NALU_HEADER*)&sendbuf[0]; //将sendbuf[12]的地址赋给nalu_hdr，之后对nalu_hdr的写入就将写入sendbuf中；
 				nalu_hdr->F=n->forbidden_bit;
@@ -324,9 +324,15 @@ int main(int argc, char** argv)
 
 				//status = session.SendPacket((void *)sendbuf,n->len);
 				if(n->nal_unit_type==1 || n->nal_unit_type==5)
+				{
 					status = session.SendPacket((void *)sendbuf,n->len,96,true,3600);
+				}
 				else
-					status = session.SendPacket((void *)sendbuf,n->len,96,false,0);
+				{
+						status = session.SendPacket((void *)sendbuf,n->len,96,true,0);\
+						//如果是6,7类型的包，不应该延时；之前有停顿，原因这在这
+						continue;
+				}
 				//发送RTP格式数据包并指定负载类型为96
 				CheckError(status);
 
@@ -346,7 +352,7 @@ int main(int argc, char** argv)
 					{
 						//printf("dddd1");
 						memset(sendbuf,0,1500);
-						session.SetDefaultMark(false);
+						//session.SetDefaultMark(false);
 						//设置FU INDICATOR,并将这个HEADER填入sendbuf[12]
 						fu_ind =(FU_INDICATOR*)&sendbuf[0]; //将sendbuf[12]的地址赋给fu_ind，之后对fu_ind的写入就将写入sendbuf中；
 						fu_ind->F=n->forbidden_bit;
@@ -375,7 +381,7 @@ int main(int argc, char** argv)
 					{
 						//printf("dddd3\n");
 						memset(sendbuf,0,1500);
-						session.SetDefaultMark(true);
+						//session.SetDefaultMark(true);
 						//设置FU INDICATOR,并将这个HEADER填入sendbuf[12]
 						fu_ind =(FU_INDICATOR*)&sendbuf[0]; //将sendbuf[12]的地址赋给fu_ind，之后对fu_ind的写入就将写入sendbuf中；
 						fu_ind->F=n->forbidden_bit;
@@ -402,7 +408,7 @@ int main(int argc, char** argv)
 					{
 						//printf("dddd2");
 						memset(sendbuf,0,1500);
-						session.SetDefaultMark(false);
+						//session.SetDefaultMark(false);
 						//设置FU INDICATOR,并将这个HEADER填入sendbuf[12]
 						fu_ind =(FU_INDICATOR*)&sendbuf[0]; //将sendbuf[12]的地址赋给fu_ind，之后对fu_ind的写入就将写入sendbuf中；
 						fu_ind->F=n->forbidden_bit;
