@@ -36,9 +36,7 @@ $(OUT)/%.o:$(SRCDIR)/%.c
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 CPPOBJS = 
-CPPOBJS=$(OUT)/RTPsender.o $(OUT)/NALDecoder.o 
-CRTPReceiver.cpp:CRTPReceiver.h
-RTPsender.cpp:RTPsender.h
+CPPOBJS=$(OUT)/NALDecoder.o 
 NALDecoder.cpp:h264.h
 
 test_jrtp:$(OUT)/test_jrtp.o $(CPPOBJS)
